@@ -1,0 +1,19 @@
+﻿@page "/app/login"
+@using LoginFrontEnd.Providers
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@inject CustomAuthStateProvider AuthStatProvider
+@inject NavigationManager Navigation
+@attribute [AllowAnonymous]
+
+<h3>Index</h3>
+<button type="button" @onclick="LoginAsync">Login</button>
+
+@code {
+	private async Task LoginAsync()
+	{
+		await AuthStatProvider.LoginAsync("edinho_adm", "12qw!@QW");
+		Navigation.NavigateTo("/app");
+		StateHasChanged(); // Adicione esta linha
+	}
+}
