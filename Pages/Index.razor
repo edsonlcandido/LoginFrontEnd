@@ -1,4 +1,4 @@
-﻿@page "/app"
+﻿@page "/"
 @using LoginFrontEnd.Providers
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
@@ -14,13 +14,13 @@
         This content is displayed only if the user is Authorized, @context.User.FindFirst(ClaimTypes.Name)?.Value <button @onclick="LogoutAsync">logout</button>
     </Authorized>
     <NotAuthorized>
-        This content is displayed if the user is Not Authorized. Please <NavLink href="/app/login">login</NavLink>.
+        This content is displayed if the user is Not Authorized. Please <NavLink href="/login">login</NavLink>.
     </NotAuthorized>
 </AuthorizeView>
 @code{
     private async Task LogoutAsync(){
         await AuthStatProvider.LogoutAsync();
-        NavigationManager.NavigateTo("/app");
+        NavigationManager.NavigateTo("/", forceLoad: true);
         StateHasChanged(); // Adicione esta linha
     }
 }

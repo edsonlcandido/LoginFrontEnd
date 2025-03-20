@@ -1,4 +1,4 @@
-﻿@page "/app/login"
+﻿@page "/login"
 @using LoginFrontEnd.Providers
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
@@ -13,7 +13,7 @@
 	private async Task LoginAsync()
 	{
 		await AuthStatProvider.LoginAsync("edinho_adm", "12qw!@QW");
-		Navigation.NavigateTo("/app");
+		Navigation.NavigateTo("/",forceLoad:true);
 		StateHasChanged(); // Adicione esta linha
 	}
 }

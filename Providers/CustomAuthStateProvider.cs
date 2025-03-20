@@ -85,8 +85,8 @@ namespace LoginFrontEnd.Providers
             var authState = new AuthenticationState(claimsPrincial);
             NotifyAuthenticationStateChanged();
             // Truque de navegação: navegar para uma rota temporária e depois para /app
-            _navigationManager.NavigateTo("/app/temp", forceLoad: false, replace: true); // Navega para uma rota temporária
-            _navigationManager.NavigateTo("/app", forceLoad: true); // Navega de volta para /app
+            //_navigationManager.NavigateTo("/temp", forceLoad: false, replace: true); // Navega para uma rota temporária
+            //_navigationManager.NavigateTo("/", forceLoad: true); // Navega de volta para /app
         }
         public void NotifyAuthenticationStateChanged()
         {
@@ -99,8 +99,8 @@ namespace LoginFrontEnd.Providers
             await _localStorageService.Remove(StorageKey);
             NotifyAuthenticationStateChanged();
             // Truque de navegação: navegar para uma rota temporária e depois para /app
-            _navigationManager.NavigateTo("/app/temp", forceLoad: false, replace: true); // Navega para uma rota temporária
-            _navigationManager.NavigateTo("/app", forceLoad: true); // Navega de volta para /app
+            //_navigationManager.NavigateTo("/temp", forceLoad: false, replace: true); // Navega para uma rota temporária
+            //_navigationManager.NavigateTo("/", forceLoad: true); // Navega de volta para /app
         }
 
     }
