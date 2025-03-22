@@ -2,18 +2,40 @@
 @using LoginFrontEnd.Providers
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
 @inject CustomAuthStateProvider AuthStatProvider
 @inject NavigationManager Navigation
 @attribute [AllowAnonymous]
 
-<h3>Index</h3>
-<button type="button" @onclick="LoginAsync">Login</button>
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleValidSubmit">
+    <div>
+        <label for="user">Usuário:</label>
+        <InputText id="user" @bind-Value="loginModel.User" />
+    </div>
+    <div>
+        <label for="password">Senha:</label>
+        <InputText id="password" type="password" @bind-Value="loginModel.Password" />
+    </div>
+    <button type="submit">Login</button>
+</EditForm>
 
 @code {
-	private async Task LoginAsync()
-	{
-		await AuthStatProvider.LoginAsync("edinho_adm", "12qw!@QW");
-		Navigation.NavigateTo("/",forceLoad:true);
-		StateHasChanged(); // Adicione esta linha
-	}
+    public LoginModel loginModel { get; set; }
+
+    protected override void OnInitialized() => loginModel ??= new();
+
+    private async Task HandleValidSubmit()
+    {
+        await AuthStatProvider.LoginAsync(loginModel.User, loginModel.Password);
+        Navigation.NavigateTo("/", forceLoad: true);
+        StateHasChanged();
+    }
+
+    public class LoginModel
+    {
+        public string User { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
 }

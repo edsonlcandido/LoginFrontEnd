@@ -12,12 +12,14 @@ namespace LoginFrontEnd.Providers
         private const string StorageKey = "UserInfo";
         private readonly LocalStorageService _localStorageService;
         private readonly NavigationManager _navigationManager;
+        private readonly CustomHttpClientProvider _customHttpClientProvider;
         public User CurrentUser { get; set; } = new();
 
-        public CustomAuthStateProvider(LocalStorageService localStorageService, NavigationManager navigationManager)
+        public CustomAuthStateProvider(LocalStorageService localStorageService, NavigationManager navigationManager, CustomHttpClientProvider customHttpClientProvider)
         {
             _localStorageService = localStorageService;
             _navigationManager = navigationManager;
+            _customHttpClientProvider = customHttpClientProvider;
             //AuthenticationStateChanged += CustomAuthStateProvider_AuthenticationStateChanged;
         }
 
@@ -68,11 +70,17 @@ namespace LoginFrontEnd.Providers
         public async Task LoginAsync(string username, string password)
         {
             Console.WriteLine("LoginAsync chamado");
+            //request a token from the server
+            //if success, save the token in local storage
+            //and notify the authentication state changed
+            var loginResponse = await _customHttpClientProvider.LoginAsync(username,password);
+
+
             var user = new User
             {
-                Id = 1,
-                Name = "Abhay Prince",
-                Token = "some-random-token-value"
+                Id = loginResponse.Id,
+                Name = loginResponse.UserName,
+                Token = loginResponse.Token
             };
             await _localStorageService.Save(StorageKey, user);
 

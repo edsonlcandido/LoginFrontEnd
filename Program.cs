@@ -12,13 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider,CustomAuthStateProvider>();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-// Configure o HttpClient para usar a URL da API externa
-builder.Services.AddHttpClient("ExternalApi", client =>
-{
-    client.BaseAddress = new Uri("https://api.externa.com/");
-});
+builder.Services.AddScoped<CustomHttpClientProvider>();
 
 
 // Adicione a autenticação
