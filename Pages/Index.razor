@@ -7,20 +7,45 @@
 @inject NavigationManager NavigationManager
 @attribute [AllowAnonymous]
 
+<div class="container mt-5">
+    <h1 class="text-center">Hello, world!</h1>
+    <AuthorizeView>
+        <Authorized>
+            <div class="alert alert-success text-center">
+                This content is displayed only if the user is Authorized, @context.User.FindFirst(ClaimTypes.Name)?.Value 
+                <button class="btn btn-danger ml-2" @onclick="LogoutAsync">Logout</button>
+            </div>
+            <div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <NavLink class="nav-link" href="/clientes">Clientes</NavLink>
+                    </li>
+                    <li class="list-group-item">
+                        <NavLink class="nav-link" href="/page2">Page 2</NavLink>
+                    </li>
+                    <li class="list-group-item">
+                        <NavLink class="nav-link" href="/page3">Page 3</NavLink>
+                    </li>
+                </ul>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="alert alert-warning text-center">
+                This content is displayed if the user is Not Authorized. Please <NavLink class="btn btn-primary" href="/login">Login</NavLink>.
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
-<h1>Hello, world!</h1>
-<AuthorizeView>
-    <Authorized>
-        This content is displayed only if the user is Authorized, @context.User.FindFirst(ClaimTypes.Name)?.Value <button @onclick="LogoutAsync">logout</button>
-    </Authorized>
-    <NotAuthorized>
-        This content is displayed if the user is Not Authorized. Please <NavLink href="/login">login</NavLink>.
-    </NotAuthorized>
-</AuthorizeView>
 @code{
     private async Task LogoutAsync(){
         await AuthStatProvider.LogoutAsync();
         NavigationManager.NavigateTo("/", forceLoad: true);
         StateHasChanged(); // Adicione esta linha
+    }
+
+    private void NavigateToPage(string url)
+    {
+        NavigationManager.NavigateTo(url);
     }
 }
