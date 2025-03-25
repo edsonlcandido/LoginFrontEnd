@@ -1,0 +1,16 @@
+﻿@using LoginFrontEnd.Providers
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using System.Security.Claims
+@inject CustomAuthStateProvider AuthStatProvider
+@inject NavigationManager NavigationManager
+<button class="btn btn-danger ml-2" @onclick="LogoutAsync">Logout</button>
+
+@code {
+    private async Task LogoutAsync()
+    {
+        await AuthStatProvider.LogoutAsync();
+        NavigationManager.NavigateTo("/", forceLoad: true);
+        StateHasChanged(); // Adicione esta linha
+    }
+}

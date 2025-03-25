@@ -1,8 +1,94 @@
 ﻿@page "/clientes"
 @using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@using LoginFrontEnd.Providers
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CustomHttpClientProvider CustomHttpClientProvider
+
 @attribute [Authorize]
-<h3>clientes</h3>
+<div class="container mt-5">
+	<h1 class="text-center">Clientes</h1>
+	<h3>Ultimos testes gerados</h3>
+	@token<br />
+	@userName.
+	@if (clientes != null)
+	{
+		<table class="table table-striped mt-3">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Password</th>
+					<th>Exp Date</th>
+					<th>Admin Notes</th>
+					<th>Reseller Notes</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var cliente in clientes)
+				{
+					<tr>
+						<td>@cliente.username</td>
+						<td>@cliente.password</td>
+						<td>@cliente.exp_date</td>
+						<td>@cliente.admin_notes</td>
+						<td>@cliente.reseller_notes</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+</div>
 
 @code {
+	private string? token { get; set; } = "";
+	private string? userName { get; set; } = "";
+	private List<Cliente>? clientes { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		token = user.FindFirst("Token")?.Value;
+		userName = user.FindFirst(ClaimTypes.Name)?.Value;
+
+		if (!string.IsNullOrEmpty(token))
+		{
+			CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
+			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
+			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
+			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-site", "cross-site");
+
+			var response = await CustomHttpClientProvider.GetFromJsonAsync<Response>("webhook/iptv-backend/v1/listar-usuarios");
+			clientes = response?.data;
+		}
+	}
+
+	public class Response
+	{
+		public int statusCode { get; set; }
+		public bool result { get; set; }
+		public List<Cliente> data { get; set; }
+		public int totalClients { get; set; }
+		public int totalPages { get; set; }
+	}
+
+	public class Cliente
+	{
+		public int id { get; set; }
+		public int member_id { get; set; }
+		public string username { get; set; }
+		public string password { get; set; }
+		public long exp_date { get; set; }
+		public int admin_enabled { get; set; }
+		public int enabled { get; set; }
+		public string admin_notes { get; set; }
+		public string reseller_notes { get; set; }
+		public string bouquet { get; set; }
+		public int max_connections { get; set; }
+		public int is_trial { get; set; }
+		public long created_at { get; set; }
+	}
 }

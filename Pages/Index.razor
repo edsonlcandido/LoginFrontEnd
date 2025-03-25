@@ -8,13 +8,9 @@
 @attribute [AllowAnonymous]
 
 <div class="container mt-5">
-    <h1 class="text-center">Hello, world!</h1>
+    <h1 class="text-center">Inicio</h1>
     <AuthorizeView>
         <Authorized>
-            <div class="alert alert-success text-center">
-                This content is displayed only if the user is Authorized, @context.User.FindFirst(ClaimTypes.Name)?.Value 
-                <button class="btn btn-danger ml-2" @onclick="LogoutAsync">Logout</button>
-            </div>
             <div>
                 <ul class="list-group">
                     <li class="list-group-item">

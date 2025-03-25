@@ -1,6 +1,68 @@
 ﻿@inherits LayoutComponentBase
+@using LoginFrontEnd.Components
+@using LoginFrontEnd.Providers
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using System.Security.Claims
+@inject CustomAuthStateProvider AuthStatProvider
+@inject NavigationManager NavigationManager
 
+<AuthorizeView>
+    <Authorized>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <span class="navbar-brand">Clientes IPTV</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="nav-link">@context.User.FindFirst(ClaimTypes.Name)?.Value</span>
+                        </li>
+                        <li class="nav-item">
+                            <LogoutButton/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </Authorized>
+    <NotAuthorized>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">AppName</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </NotAuthorized>
+</AuthorizeView>
 
 <main>
-	@Body
+    @Body
 </main>
+
+<AuthorizeView>
+    <Authorized>
+        <footer class="fixed-footer">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/">
+                            <i class="fa-solid fa-house fa-3"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </footer>
+    </Authorized>
+</AuthorizeView>
