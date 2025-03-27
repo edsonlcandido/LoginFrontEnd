@@ -57,11 +57,8 @@
 		if (!string.IsNullOrEmpty(token))
 		{
 			CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
-			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
-			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
-			CustomHttpClientProvider.DefaultRequestHeaders.Add("sec-fetch-site", "cross-site");
 
-			var response = await CustomHttpClientProvider.GetFromJsonAsync<Response>("webhook/iptv-backend/v1/listar-usuarios");
+			var response = await CustomHttpClientProvider.GetFromJsonAsync<Response>("https://bypass.ehtudo.app/https://eh-tudo-n8n.aiyfgd.easypanel.host/webhook/iptv-backend/v1/listar-clientes");
 			clientes = response?.data;
 		}
 	}

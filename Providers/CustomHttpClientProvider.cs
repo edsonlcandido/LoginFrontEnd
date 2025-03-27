@@ -7,7 +7,6 @@ namespace LoginFrontEnd.Providers
     {
         public CustomHttpClientProvider()
         {
-            BaseAddress = new("https://eh-tudo-n8n.aiyfgd.easypanel.host/");
         }
         public async Task<LoginResponse> LoginAsync(string user, string password)
         {
@@ -17,7 +16,7 @@ namespace LoginFrontEnd.Providers
                 Senha = password
             };
 
-            var response = await this.PostAsJsonAsync("webhook/iptv-backend/v1/login", loginRequest);
+            var response = await this.PostAsJsonAsync("https://bypass.ehtudo.app/https://eh-tudo-n8n.aiyfgd.easypanel.host/webhook/iptv-backend/v1/login", loginRequest);
             LoginResponse loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
             return loginResponse;
         }
