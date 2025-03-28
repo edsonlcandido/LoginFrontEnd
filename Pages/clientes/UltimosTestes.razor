@@ -1,4 +1,4 @@
-﻿@page "/clientes"
+﻿@page "/clientes/ultimos-testes"
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 @using LoginFrontEnd.Providers
@@ -10,30 +10,28 @@
 @attribute [Authorize]
 <div class="container mt-5">
 	<h1 class="text-center">Clientes</h1>
-	<h3>Clientes Fast API</h3>
-	@token<br />
-	@userName.
-	@if (fastClients != null)
+	<h3>Ultimos testes</h3>
+	@if (clientes != null)
 	{
 		<table class="table table-striped mt-3">
 			<thead>
 				<tr>
-					<th>Username</th>
-					<th>Password</th>
-					<th>Exp Date</th>
-					<th>Admin Notes</th>
-					<th>Reseller Notes</th>
+					<th>Login</th>
+					<th>Senha</th>
+					<th>Criado</th>
+					<th>Celular</th>
+					<th>Email</th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var cliente in fastClients)
+				@foreach (var cliente in clientes)
 				{
 					<tr>
-						<td>@cliente.username</td>
-						<td>@cliente.password</td>
-						<td>@cliente.exp_date</td>
-						<td>@cliente.admin_notes</td>
-						<td>@cliente.reseller_notes</td>
+						<td>@cliente.Login</td>
+						<td>@cliente.Senha</td>
+						<td>@cliente.AdicionadoDate</td>
+						<td>@cliente.Celular</td>
+						<td>@cliente.Email</td>
 					</tr>
 				}
 			</tbody>
@@ -44,7 +42,9 @@
 @code {
 	private string? token { get; set; } = "";
 	private string? userName { get; set; } = "";
+	private List<Teste>? testes { get; set; }
 	private List<FastClient>? fastClients { get; set; }
+	private List<Cliente>? clientes { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -63,6 +63,15 @@
 
 			var testesResponse = await CustomHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
 			List<Teste> testes = testesResponse.list;
+
+			// Convertendo a lista de Teste para Cliente
+			clientes = testes.Select(t => new Cliente(t)).ToList();
+
+			//invertendo a lista de clientes pela data de adição
+			clientes = clientes.OrderByDescending(c => c.AdicionadoDate).ToList();
+
+			//pegando os clientes dos ultimos 7 dias
+			clientes = clientes.Where(c => c.AdicionadoDate >= DateTime.Now.AddDays(-7)).ToList();
 		}
 	}
 
@@ -108,7 +117,7 @@
 	}
 	public class PageInfo
 	{
-		// crie as seguintes proprieades 
+		// crie as seguintes proprieades
 		// "PageInfo": {
 		// "pageSize": 0,
 		// "totalRows": 0,
@@ -121,6 +130,34 @@
 		public bool isFirstPage { get; set; }
 		public bool isLastPage { get; set; }
 		public int page { get; set; }
+	}
+
+	public class Cliente
+	{
+		public int id { get; set; }
+		public string Login { get; set; }
+		public string Senha { get; set; }
+		private string Adicionado { get; set; }
+		//quero conveter a string Adicionado para DateTime ela está em formato ISO 8601
+		public DateTime AdicionadoDate
+		{
+			get
+			{
+				return DateTime.Parse(Adicionado, null, System.Globalization.DateTimeStyles.RoundtripKind);
+			}
+		}
+		public string Celular { get; set; }
+		public string Email { get; set; }
+		public Cliente(Teste teste)
+		{
+			id = teste.id;
+			Login = teste.Login;
+			Senha = teste.Senha;
+			Adicionado = teste.Adicionado;
+			Celular = teste.Celular;
+			Email = teste.Email;
+
+		}
 	}
 
 }
