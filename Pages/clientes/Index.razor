@@ -10,7 +10,43 @@
 @attribute [Authorize]
 <div class="container mt-5">
 	<h1 class="text-center">Clientes</h1>
-	<h3>Clientes Fast API</h3>
+	
+	@if (clientWrapper != null)
+	{
+		<h4>Expirando Hoje</h4>
+		var clientsExpiringToday = clientWrapper.GetClientsExpiringToday();
+		if (clientsExpiringToday.Any())
+		{
+
+			@foreach (var client in clientsExpiringToday)
+			{
+				<div class="card w-100 mt-5">
+					<div class="card-body">
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Username:</strong> @client.username
+							</div>
+							<div class="col-md-4">
+								<strong>Password:</strong> @client.password
+							</div>
+							<div class="col-md-4">
+								<strong>Reseller Notes:</strong> @client.reseller_notes
+							</div>
+						</div>
+
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<p>Nenhum cliente expira hoje.</p>
+		}
+	}
+
+
+
+	<p>Todos clientes</p>
 	@if (fastClients != null)
 	{
 		<div class="table-responsive">
@@ -39,12 +75,19 @@
 			</table>
 		</div>
 	}
+	else
+	{
+		<p>Carregando...</p>
+	}
+	}
 </div>
 
 @code {
 	private string? token { get; set; } = "";
 	private string? userName { get; set; } = "";
 	private List<FastClient>? fastClients { get; set; }
+	private List<Teste>? testes { get; set; }
+	private ClientWrapper? clientWrapper { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -66,15 +109,16 @@
 				fastClients = fastClientesResponse.FirstOrDefault()?.data;
 			}
 
-			//fastClients = fastClientesResponse?.FirstOrDefault()?.data;
-
 			var testesResponse = await CustomHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
 			if (testesResponse != null)
 			{
-				List<Teste> testes = testesResponse.list;
+				testes = testesResponse.list;
 			}
 
-			//List<Teste> testes = testesResponse.list;
+			if (fastClients != null && testes != null)
+			{
+				clientWrapper = new ClientWrapper(fastClients, testes);
+			}
 		}
 	}
 
@@ -109,6 +153,7 @@
 		public List<Teste> list { get; set; }
 		public PageInfo pageInfo { get; set; }
 	}
+
 	public class Teste
 	{
 		public int id { get; set; }
@@ -118,16 +163,9 @@
 		public string Celular { get; set; }
 		public string Email { get; set; }
 	}
+
 	public class PageInfo
 	{
-		// crie as seguintes proprieades
-		// "PageInfo": {
-		// "pageSize": 0,
-		// "totalRows": 0,
-		// "isFirstPage": true,
-		// "isLastPage": true,
-		// "page": 0
-		// }
 		public int pageSize { get; set; }
 		public int totalRows { get; set; }
 		public bool isFirstPage { get; set; }
@@ -135,4 +173,47 @@
 		public int page { get; set; }
 	}
 
+	public class ClientWrapper
+	{
+		private List<FastClient> fastClients;
+		private List<Teste> testes;
+
+		public ClientWrapper(List<FastClient> fastClients, List<Teste> testes)
+		{
+			this.fastClients = fastClients;
+			this.testes = testes;
+		}
+
+		private DateTime ConvertFromUnixTimestamp(long timestamp)
+		{
+			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+			return dateTimeOffset.DateTime;
+		}
+
+		public List<FastClient> GetClientsExpiringInNext3Days()
+		{
+			DateTime now = DateTime.Now;
+			DateTime next3Days = now.AddDays(3);
+
+			return fastClients.Where(client =>
+				ConvertFromUnixTimestamp(client.exp_date) >= now &&
+				ConvertFromUnixTimestamp(client.exp_date) <= next3Days).ToList();
+		}
+
+		public List<FastClient> GetClientsExpiringToday()
+		{
+			DateTime today = DateTime.Today;
+
+			return fastClients.Where(client =>
+				ConvertFromUnixTimestamp(client.exp_date).Date == today).ToList();
+		}
+
+		public List<FastClient> GetClientsExpiringInFuture()
+		{
+			DateTime now = DateTime.Now;
+
+			return fastClients.Where(client =>
+				ConvertFromUnixTimestamp(client.exp_date) > now).ToList();
+		}
 	}
+}
