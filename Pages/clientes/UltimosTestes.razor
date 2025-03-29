@@ -56,7 +56,11 @@
 
 		if (!string.IsNullOrEmpty(token))
 		{
-			CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
+			// Verificar se o cabeçalho já possui o cabeçalho "xc-token"
+			if (!CustomHttpClientProvider.DefaultRequestHeaders.Contains("xc-token"))
+			{
+				CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
+			}
 
 			var fastClientesResponse = await CustomHttpClientProvider.GetFromJsonAsync<List<FastClientResponse>>("https://bypass.ehtudo.app/https://eh-tudo-n8n.aiyfgd.easypanel.host/webhook/iptv-backend/v1/listar-clientes");
 			fastClients = fastClientesResponse?.FirstOrDefault()?.data;

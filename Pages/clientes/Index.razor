@@ -11,8 +11,6 @@
 <div class="container mt-5">
 	<h1 class="text-center">Clientes</h1>
 	<h3>Clientes Fast API</h3>
-	@token<br />
-	@userName.
 	@if (fastClients != null)
 	{
 		<table class="table table-striped mt-3">
@@ -56,13 +54,25 @@
 
 		if (!string.IsNullOrEmpty(token))
 		{
+			// Limpar os cabeçalhos antes de adicionar o token
+			CustomHttpClientProvider.DefaultRequestHeaders.Clear();
 			CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
 
 			var fastClientesResponse = await CustomHttpClientProvider.GetFromJsonAsync<List<FastClientResponse>>("https://bypass.ehtudo.app/https://eh-tudo-n8n.aiyfgd.easypanel.host/webhook/iptv-backend/v1/listar-clientes");
-			fastClients = fastClientesResponse?.FirstOrDefault()?.data;
+			if (fastClientesResponse != null && fastClientesResponse.Any())
+			{
+				fastClients = fastClientesResponse.FirstOrDefault()?.data;
+			}
+			
+			//fastClients = fastClientesResponse?.FirstOrDefault()?.data;
 
 			var testesResponse = await CustomHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
-			List<Teste> testes = testesResponse.list;
+			if (testesResponse != null)
+			{
+				List<Teste> testes = testesResponse.list;
+			}
+			
+			//List<Teste> testes = testesResponse.list;
 		}
 	}
 

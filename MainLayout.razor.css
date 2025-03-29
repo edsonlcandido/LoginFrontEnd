@@ -23,3 +23,7 @@
     width: 24px;
     height: 24px;
 }
+.main-content {
+    padding-top: 8px; /* Ajuste conforme a altura do header */
+    padding-bottom: 32px; /* Ajuste conforme a altura do footer */
+}
