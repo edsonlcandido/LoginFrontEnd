@@ -13,29 +13,31 @@
 	<h3>Ultimos testes</h3>
 	@if (clientes != null)
 	{
-		<table class="table table-striped mt-3">
-			<thead>
-				<tr>
-					<th>Login</th>
-					<th>Senha</th>
-					<th>Criado</th>
-					<th>Celular</th>
-					<th>Email</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var cliente in clientes)
-				{
+		<div class="table-responsive">
+			<table class="table table-striped mt-3">
+				<thead>
 					<tr>
-						<td>@cliente.Login</td>
-						<td>@cliente.Senha</td>
-						<td>@cliente.AdicionadoDate</td>
-						<td>@cliente.Celular</td>
-						<td>@cliente.Email</td>
+						<th>Login</th>
+						<th>Senha</th>
+						<th>Criado</th>
+						<th>Celular</th>
+						<th>Email</th>
 					</tr>
-				}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					@foreach (var cliente in clientes)
+					{
+						<tr>
+							<td>@cliente.Login</td>
+							<td>@cliente.Senha</td>
+							<td>@cliente.AdicionadoDate</td>
+							<td>@cliente.Celular</td>
+							<td>@cliente.Email</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
 	}
 </div>
 

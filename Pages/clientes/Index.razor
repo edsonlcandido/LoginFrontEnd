@@ -13,29 +13,31 @@
 	<h3>Clientes Fast API</h3>
 	@if (fastClients != null)
 	{
-		<table class="table table-striped mt-3">
-			<thead>
-				<tr>
-					<th>Username</th>
-					<th>Password</th>
-					<th>Exp Date</th>
-					<th>Admin Notes</th>
-					<th>Reseller Notes</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var cliente in fastClients)
-				{
+		<div class="table-responsive">
+			<table class="table table-striped mt-3">
+				<thead>
 					<tr>
-						<td>@cliente.username</td>
-						<td>@cliente.password</td>
-						<td>@cliente.exp_date</td>
-						<td>@cliente.admin_notes</td>
-						<td>@cliente.reseller_notes</td>
+						<th>Username</th>
+						<th>Password</th>
+						<th>Exp Date</th>
+						<th>Admin Notes</th>
+						<th>Reseller Notes</th>
 					</tr>
-				}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					@foreach (var cliente in fastClients)
+					{
+						<tr>
+							<td>@cliente.username</td>
+							<td>@cliente.password</td>
+							<td>@cliente.exp_date</td>
+							<td>@cliente.admin_notes</td>
+							<td>@cliente.reseller_notes</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
 	}
 </div>
 
@@ -63,7 +65,7 @@
 			{
 				fastClients = fastClientesResponse.FirstOrDefault()?.data;
 			}
-			
+
 			//fastClients = fastClientesResponse?.FirstOrDefault()?.data;
 
 			var testesResponse = await CustomHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
@@ -71,7 +73,7 @@
 			{
 				List<Teste> testes = testesResponse.list;
 			}
-			
+
 			//List<Teste> testes = testesResponse.list;
 		}
 	}
@@ -118,7 +120,7 @@
 	}
 	public class PageInfo
 	{
-		// crie as seguintes proprieades 
+		// crie as seguintes proprieades
 		// "PageInfo": {
 		// "pageSize": 0,
 		// "totalRows": 0,
@@ -133,4 +135,4 @@
 		public int page { get; set; }
 	}
 
-}
+	}
