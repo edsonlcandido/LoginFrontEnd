@@ -11,6 +11,7 @@ namespace LoginFrontEnd.Services
         private readonly CustomHttpClientProvider _customHttpClientProvider;
         private List<FastClient> _fastClientes;
         private List<Teste> _testes;
+        private List<Models.Cliente> _clientes;
         public ClienteService(CustomHttpClientProvider customHttpClientProvider)
         {
             _customHttpClientProvider = customHttpClientProvider;
@@ -18,6 +19,7 @@ namespace LoginFrontEnd.Services
 
         public List<FastClient> FastClients => _fastClientes;
         public List<Teste> Testes => _testes;
+        public List<Cliente> Clientes => _clientes;
 
         public async Task LoadData(string token)
         {
@@ -32,7 +34,33 @@ namespace LoginFrontEnd.Services
 
                 var testesResponse = await _customHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
                 _testes = testesResponse.list;
+                _clientes = new List<Models.Cliente>();
+
+                foreach (var item in _fastClientes)
+                {
+                    //obter o teste pelo campo Login igual ao username do fastclient
+                    var teste = _testes.FirstOrDefault(x => x.Login == item.username);
+                    _clientes.Add(new Cliente()
+                    {
+                        Fast_id = item.id,
+                        Username = item.username,
+                        Password = item.password,
+                        DataExpericaoUnix = item.exp_date,
+                        Notas = item.reseller_notes,
+                        Celular = teste?.Celular,
+                        Email = teste?.Email,
+                        Teste = Convert.ToBoolean(item.is_trial)
+                    });
+                }
             }
+        }
+        public async Task<List<Cliente>> ClientesExpirandoHoje(string token)
+        {
+            if (_clientes == null)
+            {
+                await LoadData(token);
+            }
+            return _clientes.Where(x => x.DataExpiracao.Date == DateTime.Now.Date).ToList();
         }
     }
 }

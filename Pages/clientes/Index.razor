@@ -13,27 +13,27 @@
 @attribute [Authorize]
 <div class="container mt-5">
 	<h1 class="text-center">Clientes</h1>
-	
-	@if (clientWrapper != null)
-	{
-		<h4>Expirando Hoje</h4>
-		var clientsExpiringToday = clientWrapper.GetClientsExpiringToday();
-		if (clientsExpiringToday.Any())
-		{
 
-			@foreach (var client in clientsExpiringToday)
+
+	<h4>Expirando Hoje</h4>
+	@if (ClienteService.FastClients != null)
+	{
+		var clientsExpiringToday = ClienteService.ClientesExpirandoHoje(token);
+		if (clientsExpiringToday.Result != null)
+		{
+			@foreach (var cliente in clientsExpiringToday.Result)
 			{
 				<div class="card w-100 mt-5">
 					<div class="card-body">
 						<div class="row mb-3">
 							<div class="col-md-4">
-								<strong>Username:</strong> @client.username
+								<strong>Username:</strong> @cliente.Username
 							</div>
 							<div class="col-md-4">
-								<strong>Password:</strong> @client.password
+								<strong>Password:</strong> @cliente.Password
 							</div>
 							<div class="col-md-4">
-								<strong>Reseller Notes:</strong> @client.reseller_notes
+								<strong>Teste:</strong> @cliente.Teste
 							</div>
 						</div>
 
@@ -45,12 +45,14 @@
 		{
 			<p>Nenhum cliente expira hoje.</p>
 		}
+	}else{
+		<p>Carregando ...</p>
 	}
 
 
 
-	<p>Todos clientes</p>
-	@if (fastClients != null)
+	<h4>Todos clientes</h4>
+	@if (ClienteService.FastClients != null)
 	{
 		<div class="table-responsive">
 			<table class="table table-striped mt-3">
@@ -58,20 +60,20 @@
 					<tr>
 						<th>Username</th>
 						<th>Password</th>
-						<th>Exp Date</th>
-						<th>Admin Notes</th>
-						<th>Reseller Notes</th>
+						<th>Expiração</th>
+						<th>Teste</th>
+						<th>Notas</th>
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var cliente in fastClients)
+					@foreach (var cliente in ClienteService.Clientes.OrderByDescending(x => x.DataExpiracao))
 					{
 						<tr>
-							<td>@cliente.username</td>
-							<td>@cliente.password</td>
-							<td>@cliente.exp_date</td>
-							<td>@cliente.admin_notes</td>
-							<td>@cliente.reseller_notes</td>
+							<td>@cliente.Username</td>
+							<td>@cliente.Password</td>
+							<td>@cliente.DataExpiracao</td>
+							<td>@cliente.Teste</td>
+							<td>@cliente.Notas</td>
 						</tr>
 					}
 				</tbody>
