@@ -4,8 +4,11 @@
 @using LoginFrontEnd.Providers
 @using System.Net.Http
 @using System.Net.Http.Json
+@using LoginFrontEnd.Services
+@using LoginFrontEnd.Models
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject CustomHttpClientProvider CustomHttpClientProvider
+@inject ClienteService ClienteService
 
 @attribute [Authorize]
 <div class="container mt-5">
@@ -79,7 +82,6 @@
 	{
 		<p>Carregando...</p>
 	}
-	}
 </div>
 
 @code {
@@ -99,79 +101,18 @@
 
 		if (!string.IsNullOrEmpty(token))
 		{
-			// Limpar os cabeçalhos antes de adicionar o token
-			CustomHttpClientProvider.DefaultRequestHeaders.Clear();
-			CustomHttpClientProvider.DefaultRequestHeaders.Add("xc-token", token);
+			await ClienteService.LoadData(token);
 
-			var fastClientesResponse = await CustomHttpClientProvider.GetFromJsonAsync<List<FastClientResponse>>("https://bypass.ehtudo.app/https://eh-tudo-n8n.aiyfgd.easypanel.host/webhook/iptv-backend/v1/listar-clientes");
-			if (fastClientesResponse != null && fastClientesResponse.Any())
+			if (ClienteService.FastClients != null && ClienteService.Testes != null)
 			{
-				fastClients = fastClientesResponse.FirstOrDefault()?.data;
-			}
-
-			var testesResponse = await CustomHttpClientProvider.GetFromJsonAsync<TestesResponse>("https://bypass.ehtudo.app/https://eh-tudo-nocodb.aiyfgd.easypanel.host/api/v2/tables/mkdo3202f4rv75a/records?limit=1000");
-			if (testesResponse != null)
-			{
-				testes = testesResponse.list;
-			}
-
-			if (fastClients != null && testes != null)
-			{
+				fastClients = ClienteService.FastClients;
+				testes = ClienteService.Testes;
 				clientWrapper = new ClientWrapper(fastClients, testes);
 			}
 		}
 	}
 
-	public class FastClientResponse
-	{
-		public int statusCode { get; set; }
-		public bool result { get; set; }
-		public List<FastClient>? data { get; set; }
-		public int totalClients { get; set; }
-		public int totalPages { get; set; }
-	}
 
-	public class FastClient
-	{
-		public int id { get; set; }
-		public int member_id { get; set; }
-		public string username { get; set; }
-		public string password { get; set; }
-		public long exp_date { get; set; }
-		public int admin_enabled { get; set; }
-		public int enabled { get; set; }
-		public string admin_notes { get; set; }
-		public string reseller_notes { get; set; }
-		public string bouquet { get; set; }
-		public int max_connections { get; set; }
-		public int is_trial { get; set; }
-		public long created_at { get; set; }
-	}
-
-	public class TestesResponse
-	{
-		public List<Teste> list { get; set; }
-		public PageInfo pageInfo { get; set; }
-	}
-
-	public class Teste
-	{
-		public int id { get; set; }
-		public string Login { get; set; }
-		public string Senha { get; set; }
-		public string Adicionado { get; set; }
-		public string Celular { get; set; }
-		public string Email { get; set; }
-	}
-
-	public class PageInfo
-	{
-		public int pageSize { get; set; }
-		public int totalRows { get; set; }
-		public bool isFirstPage { get; set; }
-		public bool isLastPage { get; set; }
-		public int page { get; set; }
-	}
 
 	public class ClientWrapper
 	{

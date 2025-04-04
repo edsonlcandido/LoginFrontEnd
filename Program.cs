@@ -13,6 +13,7 @@ builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider,CustomAuthStateProvider>();
 builder.Services.AddScoped<CustomHttpClientProvider>();
+builder.Services.AddScoped<ClienteService>();
 
 
 // Adicione a autenticação
