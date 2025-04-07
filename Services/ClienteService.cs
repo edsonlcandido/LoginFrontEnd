@@ -19,7 +19,7 @@ namespace LoginFrontEnd.Services
 
         public List<FastClient> FastClients => _fastClientes;
         public List<Teste> Testes => _testes;
-        public List<Cliente> Clientes => _clientes;
+        public List<Cliente> Clientes => _clientes.OrderBy(x=>x.DataExpiracao).ToList();
 
         public async Task LoadData(string token)
         {
@@ -60,7 +60,21 @@ namespace LoginFrontEnd.Services
             {
                 await LoadData(token);
             }
-            return _clientes.Where(x => x.DataExpiracao.Date == DateTime.Now.Date).ToList();
+            return _clientes.Where(x => x.DataExpiracao.Date == DateTime.Now.Date)
+                .OrderBy(x=> x.DataExpiracao)
+                .ToList();
+        }
+
+        public async Task<List<Cliente>> ClientesExpirandoEm3Dias(string token)
+        {
+            if (_clientes == null)
+            {
+                await LoadData(token);
+            }
+            return _clientes.Where(x => x.DataExpiracao.Date > DateTime.Now.Date)
+                .Where(x => x.DataExpiracao.Date <= DateTime.Now.Date.AddDays(3))
+                .OrderBy(x => x.DataExpiracao)
+                .ToList();
         }
     }
 }

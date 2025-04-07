@@ -13,30 +13,34 @@
 @attribute [Authorize]
 <div class="container mt-5">
 	<h1 class="text-center">Clientes</h1>
-
-
-	<h4>Expirando Hoje</h4>
+	
 	@if (ClienteService.FastClients != null)
 	{
 		var clientsExpiringToday = ClienteService.ClientesExpirandoHoje(token);
 		if (clientsExpiringToday.Result != null)
 		{
+			<h4>Expirando Hoje</h4>
 			@foreach (var cliente in clientsExpiringToday.Result)
-			{
-				<div class="card w-100 mt-5">
+			{				
+				<div class="card w-100">
 					<div class="card-body">
 						<div class="row mb-3">
-							<div class="col-md-4">
+							<div class="col-12">
 								<strong>Username:</strong> @cliente.Username
 							</div>
-							<div class="col-md-4">
+							<div class="col-12">
 								<strong>Password:</strong> @cliente.Password
 							</div>
-							<div class="col-md-4">
-								<strong>Teste:</strong> @cliente.Teste
+							<div class="col-12">
+								<strong>Data:</strong> @cliente.DataExpiracao.ToString("dd/MM/yyyy")
+							</div>
+							<div class="col-12">
+								<strong>Teste:</strong> @(cliente.Teste ? "Sim" : "Não")
+							</div>
+							<div class="col-12">
+								<strong>Notas:</strong> @cliente.Notas
 							</div>
 						</div>
-
 					</div>
 				</div>
 			}
@@ -46,10 +50,46 @@
 			<p>Nenhum cliente expira hoje.</p>
 		}
 	}else{
-		<p>Carregando ...</p>
+		
 	}
-
-
+	
+	@if (ClienteService.FastClients != null)
+	{
+		var clientsExpiringInNext3Days = ClienteService.ClientesExpirandoEm3Dias(token);
+		if (clientsExpiringInNext3Days.Result != null)
+		{
+			<h4>Clientes expirando</h4>
+			@foreach (var cliente in clientsExpiringInNext3Days.Result)
+			{				
+				<div class="card w-100 mt-3">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-4">
+								<strong>Username:</strong> @cliente.Username
+							</div>
+							<div class="col-md-4">
+								<strong>Password:</strong> @cliente.Password
+							</div>
+							<div class="col-md-4">
+								<strong>Data:</strong> @cliente.DataExpiracao.ToString("dd/MM/yyyy")
+							</div>
+							<div class="col-md-4">
+								<strong>Teste:</strong> @(cliente.Teste ? "Sim" : "Não")
+							</div>
+							<div class="col-md-4">
+								<strong>Notas:</strong> @cliente.Notas
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<p>Nenhum cliente expira nos próximos 3 dias.</p>
+		}
+	}else{
+	}
 
 	<h4>Todos clientes</h4>
 	@if (ClienteService.FastClients != null)
@@ -72,7 +112,7 @@
 							<td>@cliente.Username</td>
 							<td>@cliente.Password</td>
 							<td>@cliente.DataExpiracao</td>
-							<td>@cliente.Teste</td>
+							<td>@(cliente.Teste ? "Sim" : "Não")</td>
 							<td>@cliente.Notas</td>
 						</tr>
 					}
